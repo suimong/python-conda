@@ -1,0 +1,3 @@
+name: workbench
+dependencies:
+  - python=3.9
