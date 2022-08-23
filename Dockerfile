@@ -1,23 +1,20 @@
-ARG BASE=python:3.9.13-bullseye
-FROM ${BASE} as base
-FROM base as installer
+FROM condaforge/mambaforge:4.13.0-1
 
-RUN apt-get update && apt-get install -y curl
+ARG USERNAME=appuser
+ARG GROUPNAME=${USERNAME}
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
 
-WORKDIR /tmp
+RUN groupadd --gid ${USER_GID} ${GROUPNAME} \
+    && useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME}
 
-ARG CONDA_VERSION=py39_4.12.0
-ARG ARCH=Linux-x86_64
-ARG PYTHON_VERSION=3.10.5
-ARG CONDA_BASE_PATH=/opt/conda
-ARG CONDA_BIN_PATH=${CONDA_BASE_PATH}/bin
+RUN apt-get update -q && \
+    apt-get install -q -y --no-install-recommends \
+    curl \
+    git \
+    git-lfs \
+    apt-get clean
 
-RUN curl -fso install-conda.sh \
-    https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-${ARCH}.sh
-RUN bash install-conda.sh -b -p ${CONDA_BASE_PATH}
+RUN rm -rf /tmp/* /var/lib/apt/lists/*
 
-RUN ${CONDA_BIN_PATH}/conda install -c conda-forge -y python=${PYTHON_VERSION}
-
-FROM base
-COPY --from=installer ${CONDA_BASE_PATH} ${CONDA_BASE_PATH}
-ENV PATH=${CONDA_BIN_PATH}:$PATH
+USER appuser
