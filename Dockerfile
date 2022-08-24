@@ -24,10 +24,10 @@ RUN rm -rf \
     /var/lib/apt/lists/*
 
 USER appuser
-
-WORKDIR /home/appuser
+WORKDIR /home/${USERNAME}
 
 COPY /${CONDA_ENV_FILE} .
+COPY /.condarc .
 
 RUN mamba env create -f ${CONDA_ENV_FILE}
 
@@ -37,4 +37,3 @@ RUN rm -rf ./${CONDA_ENV_FILE}
 # initialization
 RUN mamba init \
     && echo "mamba activate ${CONDA_ENV_NAME}" >> .bashrc
-
