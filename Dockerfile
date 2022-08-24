@@ -31,8 +31,10 @@ COPY /${CONDA_ENV_FILE} .
 
 RUN mamba env create -f ${CONDA_ENV_FILE}
 
+# cleanup
 RUN rm -rf ./${CONDA_ENV_FILE}
 
-RUN mamba init
+# initialization
+RUN mamba init \
+    && echo "mamba activate ${CONDA_ENV_NAME}" >> .bashrc
 
-# CMD conda activate ${CONDA_ENV_NAME}
