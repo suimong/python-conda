@@ -18,3 +18,9 @@ RUN apt-get update -q \
 RUN rm -rf /tmp/* /var/lib/apt/lists/*
 
 USER appuser
+
+WORKDIR /home/${USERNAME}
+
+COPY /.condarc .
+
+
